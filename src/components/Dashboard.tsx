@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 import { 
   BookOpen, 
   Cpu, 
@@ -25,6 +26,99 @@ interface DashboardProps {
 
 const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState('english');
+
+  // Language translations
+  const translations = {
+    english: {
+      welcome: "Welcome back",
+      readyForAdventure: "Ready for your next learning adventure?",
+      monitorProgress: "Monitor your students' progress",
+      chooseSubject: "Choose Your Subject",
+      subjectOverview: "Subject Overview",
+      coins: "Coins",
+      badges: "Badges",
+      level: "Level",
+      dayStreak: "Day Streak",
+      learningProgress: "Your Learning Progress",
+      overallProgress: "Overall Progress",
+      keepGoing: "Keep going! You're doing great!",
+      toNextLevel: "to next level",
+      quickActions: "Quick Actions",
+      manageStudents: "Manage Students",
+      viewTopPerformers: "View Top Performers",
+      resolveDoubts: "Resolve Doubts",
+      mcqs: "MCQs",
+      manage: "Manage",
+      interactive: "Interactive",
+      logout: "Logout"
+    },
+    hindi: {
+      welcome: "वापसी पर स्वागत है",
+      readyForAdventure: "अपने अगले सीखने के रोमांच के लिए तैयार हैं?",
+      monitorProgress: "अपने छात्रों की प्रगति देखें",
+      chooseSubject: "अपना विषय चुनें",
+      subjectOverview: "विषय अवलोकन",
+      coins: "सिक्के",
+      badges: "बैज",
+      level: "स्तर",
+      dayStreak: "दिन की लकीर",
+      learningProgress: "आपकी सीखने की प्रगति",
+      overallProgress: "कुल प्रगति",
+      keepGoing: "चलते रहो! आप बहुत अच्छा कर रहे हैं!",
+      toNextLevel: "अगले स्तर तक",
+      quickActions: "त्वरित कार्य",
+      manageStudents: "छात्रों का प्रबंधन",
+      viewTopPerformers: "शीर्ष प्रदर्शनकर्ता देखें",
+      resolveDoubts: "संदेह दूर करें",
+      mcqs: "MCQs",
+      manage: "प्रबंधन",
+      interactive: "इंटरेक्टिव",
+      logout: "लॉगआउट"
+    },
+    odia: {
+      welcome: "ଫେରାଇ ସ୍ୱାଗତ",
+      readyForAdventure: "ଆପଣଙ୍କର ପରବର୍ତ୍ତୀ ଶିକ୍ଷା ଦୁଃସାହସିକ କାର୍ଯ୍ୟ ପାଇଁ ପ୍ରସ୍ତୁତ?",
+      monitorProgress: "ଆପଣଙ୍କ ଛାତ୍ରମାନଙ୍କର ଅଗ୍ରଗତି ମନିଟର କରନ୍ତୁ",
+      chooseSubject: "ଆପଣଙ୍କର ବିଷୟ ବାଛନ୍ତୁ",
+      subjectOverview: "ବିଷୟ ସମୀକ୍ଷା",
+      coins: "ମୁଦ୍ରା",
+      badges: "ବ୍ୟାଜ୍",
+      level: "ସ୍ତର",
+      dayStreak: "ଦିନର ଧାରା",
+      learningProgress: "ଆପଣଙ୍କର ଶିକ୍ଷା ଅଗ୍ରଗତି",
+      overallProgress: "ସାମଗ୍ରିକ ଅଗ୍ରଗତି",
+      keepGoing: "ଚାଲିଥାଅ! ଆପଣ ବହୁତ ଭଲ କରୁଛନ୍ତି!",
+      toNextLevel: "ପରବର୍ତ୍ତୀ ସ୍ତର ପର୍ଯ୍ୟନ୍ତ",
+      quickActions: "ଦ୍ରୁତ କାର୍ଯ୍ୟ",
+      manageStudents: "ଛାତ୍ର ପରିଚାଳନା",
+      viewTopPerformers: "ଶୀର୍ଷ ପ୍ରଦର୍ଶନକାରୀ ଦେଖନ୍ତୁ",
+      resolveDoubts: "ସନ୍ଦେହ ସମାଧାନ",
+      mcqs: "MCQs",
+      manage: "ପରିଚାଳନା",
+      interactive: "ଇଣ୍ଟରାକ୍ଟିଭ୍",
+      logout: "ଲଗଆଉଟ୍"
+    }
+  };
+
+  const t = translations[selectedLanguage as keyof typeof translations];
+
+  // Teacher quick actions handlers
+  const handleManageStudents = () => {
+    toast.success(`${t.manageStudents} - Feature coming soon!`);
+  };
+
+  const handleViewTopPerformers = () => {
+    toast.success(`${t.viewTopPerformers} - Feature coming soon!`);
+  };
+
+  const handleResolveDoubts = () => {
+    toast.success(`${t.resolveDoubts} - Feature coming soon!`);
+  };
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    toast.success(`Language switched to ${language === 'english' ? 'English' : language === 'hindi' ? 'हिंदी' : 'ଓଡ଼ିଆ'}`);
+  };
 
   const subjects = [
     {
@@ -72,17 +166,17 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-primary mb-2">
-              Welcome back, {userData.name}! 
+              {t.welcome}, {userData.name}! 
             </h1>
             <p className="text-muted-foreground">
-              {userType === 'student' ? 'Ready for your next learning adventure?' : 'Monitor your students\' progress'}
+              {userType === 'student' ? t.readyForAdventure : t.monitorProgress}
             </p>
           </div>
           
           <div className="flex items-center gap-4">
             <select 
               value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
+              onChange={(e) => handleLanguageChange(e.target.value)}
               className="px-3 py-2 rounded-lg border border-border bg-background"
             >
               <option value="english">🇬🇧 English</option>
@@ -92,7 +186,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
             
             <Button variant="ghost" onClick={onLogout}>
               <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              {t.logout}
             </Button>
           </div>
         </div>
@@ -106,7 +200,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
                   <Coins className="w-6 h-6 text-yellow-500" />
                 </div>
                 <div className="text-2xl font-bold text-yellow-600">{studentStats.coins}</div>
-                <div className="text-sm text-muted-foreground">Coins</div>
+                <div className="text-sm text-muted-foreground">{t.coins}</div>
               </Card>
 
               <Card className="p-4 text-center">
@@ -114,7 +208,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
                   <Trophy className="w-6 h-6 text-purple-500" />
                 </div>
                 <div className="text-2xl font-bold text-purple-600">{studentStats.badges}</div>
-                <div className="text-sm text-muted-foreground">Badges</div>
+                <div className="text-sm text-muted-foreground">{t.badges}</div>
               </Card>
 
               <Card className="p-4 text-center">
@@ -122,7 +216,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
                   <Star className="w-6 h-6 text-blue-500" />
                 </div>
                 <div className="text-2xl font-bold text-blue-600">{studentStats.level}</div>
-                <div className="text-sm text-muted-foreground">Level</div>
+                <div className="text-sm text-muted-foreground">{t.level}</div>
               </Card>
 
               <Card className="p-4 text-center">
@@ -130,22 +224,22 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
                   <Target className="w-6 h-6 text-green-500" />
                 </div>
                 <div className="text-2xl font-bold text-green-600">{studentStats.streak}</div>
-                <div className="text-sm text-muted-foreground">Day Streak</div>
+                <div className="text-sm text-muted-foreground">{t.dayStreak}</div>
               </Card>
             </div>
 
             {/* Progress Card */}
             <Card className="p-6 mb-8">
-              <h3 className="text-lg font-semibold mb-4">Your Learning Progress</h3>
+              <h3 className="text-lg font-semibold mb-4">{t.learningProgress}</h3>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span>Overall Progress</span>
+                  <span>{t.overallProgress}</span>
                   <span>{studentStats.progress}%</span>
                 </div>
                 <Progress value={studentStats.progress} className="h-2" />
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Keep going! You're doing great!</span>
-                  <span>{100 - studentStats.progress}% to next level</span>
+                  <span>{t.keepGoing}</span>
+                  <span>{100 - studentStats.progress}% {t.toNextLevel}</span>
                 </div>
               </div>
             </Card>
@@ -155,7 +249,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
         {/* Subjects Grid */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-6">
-            {userType === 'student' ? 'Choose Your Subject' : 'Subject Overview'}
+            {userType === 'student' ? t.chooseSubject : t.subjectOverview}
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -178,10 +272,10 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
                   
                   <div className="flex justify-center gap-2">
                     <Badge variant="secondary" className="text-xs">
-                      {userType === 'student' ? '10 MCQs' : 'Manage'}
+                      {userType === 'student' ? `10 ${t.mcqs}` : t.manage}
                     </Badge>
                     <Badge variant="outline" className="text-xs">
-                      Interactive
+                      {t.interactive}
                     </Badge>
                   </div>
                 </Card>
@@ -193,19 +287,31 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
         {/* Recent Activity or Teacher Actions */}
         {userType === 'teacher' && (
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-semibold mb-4">{t.quickActions}</h3>
             <div className="grid md:grid-cols-3 gap-4">
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto py-4 flex flex-col gap-2 hover:bg-primary/5"
+                onClick={handleManageStudents}
+              >
                 <User className="w-6 h-6" />
-                <span>Manage Students</span>
+                <span>{t.manageStudents}</span>
               </Button>
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto py-4 flex flex-col gap-2 hover:bg-primary/5"
+                onClick={handleViewTopPerformers}
+              >
                 <Trophy className="w-6 h-6" />
-                <span>View Top Performers</span>
+                <span>{t.viewTopPerformers}</span>
               </Button>
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto py-4 flex flex-col gap-2 hover:bg-primary/5"
+                onClick={handleResolveDoubts}
+              >
                 <BookOpen className="w-6 h-6" />
-                <span>Resolve Doubts</span>
+                <span>{t.resolveDoubts}</span>
               </Button>
             </div>
           </Card>
