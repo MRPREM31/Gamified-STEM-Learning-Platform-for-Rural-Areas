@@ -2,41 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* EduQuest Design System - Educational & Gamified Learning Platform */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Educational Color Palette */
+    --background: 35 100% 96%;
+    --foreground: 220 18% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 18% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 18% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Educational Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 91% 70%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Warm Orange */
+    --secondary: 43 96% 56%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Success - Learning Green */
+    --success: 158 64% 52%;
+    --success-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Muted tones */
+    --muted: 35 44% 92%;
+    --muted-foreground: 220 18% 46%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --border: 35 44% 88%;
+    --input: 35 44% 88%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    /* Educational Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(43 96% 66%));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(158 64% 62%));
+    --gradient-learning: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(43 96% 56%) 50%, hsl(158 64% 52%) 100%);
+
+    /* Storybook Effects */
+    --shadow-book: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-page: 0 5px 15px -5px hsl(220 18% 20% / 0.2);
+    --shadow-floating: 0 20px 40px -20px hsl(var(--primary) / 0.4);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Badge Colors */
+    --bronze: 30 100% 50%;
+    --silver: 0 0% 75%;
+    --gold: 51 100% 50%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +128,73 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
+
+  /* Custom Animations */
+  @keyframes page-flip {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(-90deg); }
+    100% { transform: rotateY(0deg); }
+  }
+
+  @keyframes badge-bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  @keyframes coin-spin {
+    0% { transform: rotateY(0deg) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.1); }
+    100% { transform: rotateY(360deg) scale(1); }
+  }
+
+  @keyframes book-open {
+    0% { transform: scale(0.9) rotateX(-10deg); opacity: 0; }
+    100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+  }
+
+  .page-flip { animation: page-flip 0.6s ease-in-out; }
+  .badge-bounce { animation: badge-bounce 0.8s ease-in-out; }
+  .coin-spin { animation: coin-spin 0.5s ease-in-out; }
+  .book-open { animation: book-open 0.5s ease-out; }
+}
+
+@layer components {
+  /* Storybook Page Styles */
+  .storybook-page {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(35 100% 98%) 100%);
+    box-shadow: var(--shadow-book);
+    border: 2px solid hsl(var(--border));
+  }
+
+  /* Educational Button Variants */
+  .btn-hero {
+    background: var(--gradient-hero);
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--shadow-floating);
+    transition: var(--transition-bounce);
+  }
+
+  .btn-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -20px hsl(var(--primary) / 0.5);
+  }
+
+  .btn-subject {
+    background: var(--gradient-learning);
+    color: hsl(var(--primary-foreground));
+    transition: var(--transition-smooth);
+  }
+
+  .btn-subject:hover {
+    background: var(--gradient-secondary);
+    transform: scale(1.05);
+  }
+
+  /* Badge Styles */
+  .badge-bronze { background: linear-gradient(135deg, hsl(var(--bronze)), hsl(30 100% 60%)); }
+  .badge-silver { background: linear-gradient(135deg, hsl(var(--silver)), hsl(0 0% 85%)); }
+  .badge-gold { background: linear-gradient(135deg, hsl(var(--gold)), hsl(51 100% 60%)); }
 }
