@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Footer } from "@/components/ui/footer";
 import { toast } from "sonner";
 import { 
   BookOpen, 
@@ -151,13 +152,35 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
     }
   ];
 
-  const studentStats = {
-    coins: 1250,
-    badges: 8,
-    level: 5,
-    streak: 7,
-    progress: 65
-  };
+
+  // Fetch user stats from backend
+  const [studentStats, setStudentStats] = useState({
+    coins: 0,
+    badges: 0,
+    level: 0,
+    streak: 0,
+    progress: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!userData?.id) return;
+      try {
+        const res = await fetch(`http://localhost:4000/api/results/${userData.id}`);
+        const results = await res.json();
+        // Aggregate stats from results
+        const coins = results.reduce((sum: number, r: any) => sum + (r.coins || 0), 0);
+        const badges = results.length;
+        const level = Math.floor(coins / 100);
+        const streak = badges; // demo: streak = badges
+        const progress = Math.min(100, coins / 10);
+        setStudentStats({ coins, badges, level, streak, progress });
+      } catch (err) {
+        setStudentStats({ coins: 0, badges: 0, level: 0, streak: 0, progress: 0 });
+      }
+    };
+    fetchStats();
+  }, [userData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
@@ -317,6 +340,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
           </Card>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

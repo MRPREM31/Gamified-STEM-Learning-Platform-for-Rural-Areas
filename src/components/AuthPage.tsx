@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Footer } from "@/components/ui/footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, User, GraduationCap, Mail, School, Calendar, IdCard } from "lucide-react";
@@ -40,18 +41,60 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
     setFormData(newData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let userData = null;
     if (activeTab === "register") {
-      // In real app, would send OTP here
-      alert(`Registration successful! Your ID: ${formData.id}`);
+      // Register user via backend
+      try {
+        const res = await fetch("http://localhost:4000/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.id, // using generated ID as password for demo
+            type: userType,
+            school: formData.school,
+            class: formData.class,
+            dob: formData.dob
+          })
+        });
+        userData = await res.json();
+        alert(`Registration successful! Your ID: ${userData.id}`);
+      } catch (err) {
+        alert("Registration failed");
+        return;
+      }
+    } else {
+      // Login user via backend
+      try {
+        const res = await fetch("http://localhost:4000/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.id // using ID as password for demo
+          })
+        });
+        userData = await res.json();
+        if (userData.error) {
+          alert("Login failed: " + userData.error);
+          return;
+        }
+      } catch (err) {
+        alert("Login failed");
+        return;
+      }
     }
-    onLogin(userType, formData);
+    onLogin(userType, userData);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-      <div className="storybook-page max-w-md w-full rounded-3xl p-8 book-open relative">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="storybook-page max-w-md w-full rounded-3xl p-8 book-open relative bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/50">
         <Button
           variant="ghost"
           onClick={onBack}
@@ -225,6 +268,10 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
             </form>
           </TabsContent>
         </Tabs>
+        </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
       </div>
     </div>
   );

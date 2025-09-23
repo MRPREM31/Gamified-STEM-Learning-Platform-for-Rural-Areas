@@ -1,18 +1,18 @@
-# Welcome to your Lovable project
+# Welcome to your Quantumcoders project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/56536ba0-9ad8-4536-b28d-94abcd386312
+**URL**: https://quantumcoders.dev/projects/56536ba0-9ad8-4536-b28d-94abcd386312
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use Quantumcoders**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/56536ba0-9ad8-4536-b28d-94abcd386312) and start prompting.
+Simply visit the [Quantumcoders Project](https://quantumcoders.dev/projects/56536ba0-9ad8-4536-b28d-94abcd386312) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made via Quantumcoders will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
