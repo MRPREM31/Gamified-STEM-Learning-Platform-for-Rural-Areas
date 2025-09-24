@@ -66,9 +66,9 @@ app.get('/api/questions/quiz/:quizId', async (req, res) => {
   try {
     const { quizId } = req.params;
     
-    // Get questions for the quiz
+    // Get exactly 10 questions for the quiz
     const questions = await db.all(
-      `SELECT * FROM questions WHERE quiz_id = ?`,
+      `SELECT * FROM questions WHERE quiz_id = ? LIMIT 10`,
       [quizId]
     );
 

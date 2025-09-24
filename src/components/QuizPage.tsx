@@ -323,7 +323,7 @@ const QuizPage = ({ userId, subject, userClass, onBack, onComplete }: QuizPagePr
               <div>
                 <h2 className="text-xl font-semibold mb-1">{selectedQuiz?.title}</h2>
                 <p className="text-sm text-muted-foreground">
-                  Question {currentQuestion + 1} of {questions.length}
+                  Question {currentQuestion + 1} of 10
                 </p>
               </div>
               <div className="text-right">
