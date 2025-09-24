@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookOpen, Users, GraduationCap, Star, Award, Target } from "lucide-react";
-import eduQuestLogo from "@/assets/unnamed (1).png";
+import eduQuestLogo from "@/assets/eduquest icon.png";
 import { Footer } from "@/components/ui/footer";
 
 interface WelcomePageProps {
