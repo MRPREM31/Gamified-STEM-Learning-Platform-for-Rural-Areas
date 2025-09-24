@@ -22,8 +22,22 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
     school: "",
     class: "",
     dob: "",
-    id: ""
+    id: "",
+    subjects: "General",
+    experience: "0 years"
   });
+
+  // Reset form when switching user type
+  const handleUserTypeChange = (type: 'student' | 'teacher') => {
+    setUserType(type);
+    setFormData(prev => ({
+      ...prev,
+      class: type === 'student' ? prev.class : '',
+      dob: type === 'student' ? prev.dob : '',
+      subjects: type === 'teacher' ? prev.subjects : '',
+      experience: type === 'teacher' ? prev.experience : ''
+    }));
+  };
 
   const generateId = (name: string, dob: string) => {
     if (!name || !dob) return "";
@@ -45,50 +59,82 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let userData = null;
-    if (activeTab === "register") {
-      // Register user via backend
-      try {
+
+    try {
+      if (activeTab === "register") {
+        // Validate required fields
+        if (!formData.name || !formData.email || !formData.school) {
+          alert("Please fill in all required fields");
+          return;
+        }
+
+        // Generate password if not already set
+        const password = formData.id || generateId(formData.name, formData.dob);
+        if (!formData.id) {
+          setFormData(prev => ({ ...prev, id: password }));
+        }
+
+        // Registration
         const res = await fetch("http://localhost:4000/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
-            password: formData.id, // using generated ID as password for demo
+            password: password,
             type: userType,
             school: formData.school,
-            class: formData.class,
-            dob: formData.dob
+            ...(userType === 'student' ? {
+              class: formData.class,
+              dob: formData.dob
+            } : {
+              subjects: formData.subjects || 'General',
+              experience: formData.experience || '0 years'
+            })
           })
         });
-        userData = await res.json();
-        alert(`Registration successful! Your ID: ${userData.id}`);
-      } catch (err) {
-        alert("Registration failed");
-        return;
-      }
-    } else {
-      // Login user via backend
-      try {
+
+        const response = await res.json();
+        if (!res.ok) {
+          throw new Error(response.error || 'Registration failed');
+        }
+
+        userData = response;
+        alert(`Registration successful! Your ID: ${formData.id}\nPlease save this ID for login.`);
+      } else {
+        // Login
+        if (!formData.email || !formData.id) {
+          alert("Please enter both email and ID");
+          return;
+        }
+
         const res = await fetch("http://localhost:4000/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: formData.email,
-            password: formData.id // using ID as password for demo
+            password: formData.id,
+            type: userType
           })
         });
-        userData = await res.json();
-        if (userData.error) {
-          alert("Login failed: " + userData.error);
-          return;
+
+        const response = await res.json();
+        if (!res.ok) {
+          throw new Error(response.error || 'Login failed');
         }
-      } catch (err) {
-        alert("Login failed");
-        return;
+
+        userData = response;
       }
+
+      // Only proceed with login if we have user data
+      if (userData && !userData.error) {
+        onLogin(userType, userData);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Operation failed";
+      alert(errorMessage);
+      console.error('Error:', err);
     }
-    onLogin(userType, userData);
   };
 
   return (
@@ -112,7 +158,7 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Button
             variant={userType === 'student' ? 'default' : 'outline'}
-            onClick={() => setUserType('student')}
+            onClick={() => handleUserTypeChange('student')}
             className="flex flex-col gap-2 h-auto py-4"
           >
             <GraduationCap className="w-6 h-6" />
@@ -120,7 +166,7 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
           </Button>
           <Button
             variant={userType === 'teacher' ? 'default' : 'outline'}
-            onClick={() => setUserType('teacher')}
+            onClick={() => handleUserTypeChange('teacher')}
             className="flex flex-col gap-2 h-auto py-4"
           >
             <User className="w-6 h-6" />
@@ -137,22 +183,9 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="loginId">
-                  <IdCard className="w-4 h-4 inline mr-2" />
-                  {userType === 'student' ? 'Student' : 'Teacher'} ID or Name
-                </Label>
-                <Input
-                  id="loginId"
-                  value={formData.id || formData.name}
-                  onChange={(e) => handleInputChange('id', e.target.value)}
-                  placeholder="Enter your ID or name"
-                  required
-                />
-              </div>
-              <div>
                 <Label htmlFor="loginEmail">
                   <Mail className="w-4 h-4 inline mr-2" />
-                  Email (for OTP)
+                  Email
                 </Label>
                 <Input
                   id="loginEmail"
@@ -163,8 +196,21 @@ const AuthPage = ({ onBack, onLogin }: AuthPageProps) => {
                   required
                 />
               </div>
+              <div>
+                <Label htmlFor="loginId">
+                  <IdCard className="w-4 h-4 inline mr-2" />
+                  {userType === 'student' ? 'Student' : 'Teacher'} ID
+                </Label>
+                <Input
+                  id="loginId"
+                  value={formData.id}
+                  onChange={(e) => handleInputChange('id', e.target.value)}
+                  placeholder="Enter your ID"
+                  required
+                />
+              </div>
               <Button type="submit" className="w-full" variant="hero">
-                Send OTP & Login
+                Login
               </Button>
             </form>
           </TabsContent>

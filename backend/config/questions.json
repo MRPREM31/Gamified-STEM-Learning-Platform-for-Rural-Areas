@@ -3,6 +3,10 @@
     {
       "id": 1,
       "subject": "Math",
+      "subject_id": 1,
+      "title": "Basic Mathematics Quiz",
+      "description": "Test your basic math skills",
+      "difficulty_level": "easy",
       "class": "10",
       "questions": [
         {
@@ -20,6 +24,10 @@
     {
       "id": 2,
       "subject": "Science",
+      "subject_id": 2,
+      "title": "Basic Science Quiz",
+      "description": "Test your knowledge of basic science concepts",
+      "difficulty_level": "medium",
       "class": "10",
       "questions": [
         {
@@ -47,6 +55,10 @@
     {
       "id": 3,
       "subject": "Social Studies",
+      "subject_id": 3,
+      "title": "Social Studies Quiz",
+      "description": "Test your knowledge of social studies",
+      "difficulty_level": "medium",
       "class": "10",
       "questions": [
         {

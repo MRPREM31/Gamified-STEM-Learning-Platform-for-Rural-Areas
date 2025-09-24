@@ -15,9 +15,11 @@ const queryClient = new QueryClient();
 type AppState = 'welcome' | 'auth' | 'dashboard' | 'quiz';
 
 const App = () => {
-  const [currentState, setCurrentState] = useState<AppState>('welcome');
-  const [userType, setUserType] = useState<'student' | 'teacher'>('student');
-  const [userData, setUserData] = useState<any>(null);
+  // Initialize state from localStorage if available
+  const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const [currentState, setCurrentState] = useState<AppState>(savedUser ? 'dashboard' : 'welcome');
+  const [userType, setUserType] = useState<'student' | 'teacher'>(savedUser?.type || 'student');
+  const [userData, setUserData] = useState<any>(savedUser?.data || null);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
 
   const handleGetStarted = () => {
@@ -28,6 +30,8 @@ const App = () => {
     setUserType(type);
     setUserData(data);
     setCurrentState('dashboard');
+    // Save user data to localStorage for persistence
+    localStorage.setItem('user', JSON.stringify({ type, data }));
   };
 
   const handleSubjectSelect = (subject: string) => {
@@ -35,14 +39,41 @@ const App = () => {
     setCurrentState('quiz');
   };
 
-  const handleQuizComplete = (score: number, coins: number, badge: string) => {
-    // In real app, save to backend
-    console.log('Quiz completed:', { score, coins, badge });
+  const handleQuizComplete = async (score: number, coins: number, badge: string) => {
+    if (userData?.id) {
+      try {
+        const response = await fetch('http://localhost:4000/api/quiz-results', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            studentId: userData.id,
+            score,
+            coins,
+            badge,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to save quiz results');
+        }
+        
+        // Update user data with new coins/badges if needed
+        const updatedData = { ...userData, coins: (userData.coins || 0) + coins };
+        setUserData(updatedData);
+        localStorage.setItem('user', JSON.stringify({ type: userType, data: updatedData }));
+      } catch (error) {
+        console.error('Error saving quiz results:', error);
+      }
+    }
   };
 
   const handleLogout = () => {
     setCurrentState('welcome');
     setUserData(null);
+    setUserType('student');
+    localStorage.removeItem('user');
   };
 
   const handleBackToDashboard = () => {
@@ -71,6 +102,7 @@ const App = () => {
       case 'quiz':
         return (
           <QuizPage
+            userId={userData?.id}
             subject={selectedSubject}
             userClass={userData?.class || '6'}
             onBack={handleBackToDashboard}
