@@ -1,8 +1,7 @@
 import express from 'express';
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { initializeDatabase } from './database.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,11 +18,56 @@ app.use(bodyParser.json());
 
 // SQLite3 setup
 let db;
+
+// API endpoints
+app.get('/api/subjects', async (req, res) => {
+  try {
+    const subjects = await db.all('SELECT * FROM subjects');
+    res.json(subjects);
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+    res.status(500).json({ error: 'Failed to fetch subjects' });
+  }
+});
+
+// Get quizzes by subject and class
+app.get('/api/quizzes/subject/:subjectId/class/:class', async (req, res) => {
+  try {
+    const { subjectId, class: studentClass } = req.params;
+    
+    // First verify the subject exists
+    const subject = await db.get('SELECT * FROM subjects WHERE id = ?', [subjectId]);
+    if (!subject) {
+      return res.status(404).json({ error: 'Subject not found' });
+    }
+
+    // Get quizzes for the subject and class
+    const quizzes = await db.all(
+      `SELECT q.*, s.name as subject_name 
+       FROM quizzes q
+       JOIN subjects s ON q.subject_id = s.id
+       WHERE q.subject_id = ? AND q.class = ?`,
+      [subjectId, studentClass]
+    );
+
+    if (quizzes.length === 0) {
+      return res.json([]);
+    }
+
+    res.json(quizzes);
+  } catch (error) {
+    console.error('Error fetching quizzes:', error);
+    res.status(500).json({ error: 'Failed to fetch quizzes' });
+  }
+});
 (async () => {
-  db = await open({
-    filename: './database.sqlite',
-    driver: sqlite3.Database
-  });
+  try {
+    db = await initializeDatabase();
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
 
   // Create tables if not exist
   await db.exec(`
@@ -61,6 +105,36 @@ let db;
       name TEXT UNIQUE NOT NULL,
       description TEXT
     );
+
+    -- Insert initial subjects if they don't exist
+    INSERT OR IGNORE INTO subjects (name, description) VALUES
+    ('Mathematics', 'Learn core mathematical concepts and problem solving'),
+    ('Science', 'Explore scientific principles and natural phenomena'),
+    ('English', 'Develop language and communication skills'),
+    ('Technology', 'Understanding modern technology and computing'),
+    ('Engineering', 'Basic engineering concepts and principles');
+
+    -- Insert a sample teacher if not exists
+    INSERT OR IGNORE INTO teachers (name, email, password, school, subjects, experience)
+    VALUES ('Demo Teacher', 'demo@teacher.com', 'password123', 'Demo School', 'Mathematics,Science', '5 years');
+
+    -- Insert sample quizzes for Class 6
+    INSERT OR IGNORE INTO quizzes (subject_id, title, description, class, created_by, difficulty_level) VALUES
+    (1, 'Basic Mathematics - Class 6', 'Fundamental math concepts for class 6', '6', 1, 'easy'),
+    (1, 'Basic Algebra - Class 6', 'Introduction to algebra for class 6', '6', 1, 'easy'),
+    (2, 'Basic Science - Class 6', 'Introduction to science for class 6', '6', 1, 'easy'),
+    (2, 'Earth Science - Class 6', 'Learn about Earth and Space', '6', 1, 'easy'),
+    (4, 'Introduction to Computers - Class 6', 'Basic computer concepts', '6', 1, 'easy'),
+    (5, 'Simple Machines - Class 6', 'Learn about basic machines', '6', 1, 'easy');
+
+    -- Insert sample quizzes for Class 10
+    INSERT OR IGNORE INTO quizzes (subject_id, title, description, class, created_by, difficulty_level) VALUES
+    (1, 'Advanced Mathematics - Class 10', 'Advanced math concepts', '10', 1, 'medium'),
+    (1, 'Advanced Algebra - Class 10', 'Complex algebraic concepts', '10', 1, 'medium'),
+    (2, 'Physics - Class 10', 'Basic physics concepts', '10', 1, 'medium'),
+    (2, 'Chemistry - Class 10', 'Introduction to chemistry', '10', 1, 'medium'),
+    (4, 'Computer Science - Class 10', 'Programming basics', '10', 1, 'medium'),
+    (5, 'Engineering Basics - Class 10', 'Basic engineering concepts', '10', 1, 'medium');
 
     -- Quizzes table
     CREATE TABLE IF NOT EXISTS quizzes (
