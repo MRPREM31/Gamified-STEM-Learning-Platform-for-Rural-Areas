@@ -85,6 +85,86 @@ initializeDatabase().catch(err => {
   process.exit(1);
 });
 
+// Get all subjects
+app.get('/api/subjects', async (req, res) => {
+  try {
+    const subjects = await db.all('SELECT * FROM subjects');
+    res.json(subjects);
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+    res.status(500).json({ error: 'Failed to fetch subjects' });
+  }
+});
+
+// Get quizzes by subject and class
+app.get('/api/quizzes/subject/:subjectId/class/:class', async (req, res) => {
+  try {
+    const { subjectId, class: studentClass } = req.params;
+    const quizzes = await db.all(
+      'SELECT * FROM quizzes WHERE subject_id = ? AND class = ?',
+      [subjectId, studentClass]
+    );
+    res.json(quizzes);
+  } catch (error) {
+    console.error('Error fetching quizzes:', error);
+    res.status(500).json({ error: 'Failed to fetch quizzes' });
+  }
+});
+
+// Get questions by quiz ID
+app.get('/api/questions/quiz/:quizId', async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const questions = await db.all(
+      'SELECT * FROM questions WHERE quiz_id = ?',
+      [quizId]
+    );
+    // Parse the options from JSON string to array
+    questions.forEach(q => {
+      q.options = JSON.parse(q.options);
+    });
+    res.json(questions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Failed to fetch questions' });
+  }
+});
+
+// Get quiz results for a user
+app.get('/api/results/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const results = await db.all(
+      `SELECT qr.*, q.title as quiz_title, s.name as subject_name 
+       FROM quiz_results qr
+       JOIN quizzes q ON qr.quiz_id = q.id
+       JOIN subjects s ON q.subject_id = s.id
+       WHERE qr.user_id = ?
+       ORDER BY qr.completed_at DESC`,
+      [userId]
+    );
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching results:', error);
+    res.status(500).json({ error: 'Failed to fetch results' });
+  }
+});
+
+// Submit quiz result
+app.post('/api/results', async (req, res) => {
+  try {
+    const { userId, quizId, score, coinsEarned, badge } = req.body;
+    const result = await db.run(
+      'INSERT INTO quiz_results (user_id, quiz_id, score, coins_earned, badge) VALUES (?, ?, ?, ?, ?)',
+      [userId, quizId, score, coinsEarned, badge]
+    );
+    res.json({ id: result.lastID });
+  } catch (error) {
+    console.error('Error submitting result:', error);
+    res.status(500).json({ error: 'Failed to submit result' });
+  }
+});
+
 // Registration endpoint
 app.post('/api/register', async (req, res) => {
   try {
