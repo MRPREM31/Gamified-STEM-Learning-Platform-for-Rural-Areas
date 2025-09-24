@@ -108,25 +108,34 @@ async function initializeDatabase() {
 
   // Insert quizzes
   await db.exec(`
-    -- Insert sample quizzes for Class 6
+    -- Insert sample quizzes for Science Class 6 only
     INSERT OR IGNORE INTO quizzes (subject_id, title, description, class, created_by, difficulty_level) VALUES
-    (1, 'Basic Mathematics - Class 6', 'Fundamental math concepts for class 6', '6', 1, 'easy'),
-    (1, 'Basic Algebra - Class 6', 'Introduction to algebra for class 6', '6', 1, 'easy'),
-    (2, 'Basic Science - Class 6', 'Introduction to science for class 6', '6', 1, 'easy'),
-    (2, 'Earth Science - Class 6', 'Learn about Earth and Space', '6', 1, 'easy'),
-    (4, 'Introduction to Computers - Class 6', 'Basic computer concepts', '6', 1, 'easy'),
-    (5, 'Simple Machines - Class 6', 'Learn about basic machines', '6', 1, 'easy');
+    (2, 'Basic Science - Class 6', 'Introduction to science for class 6', '6', 1, 'easy');
   `);
 
+  // Insert exactly 10 questions for Basic Science - Class 6
   await db.exec(`
-    -- Insert sample quizzes for Class 10
-    INSERT OR IGNORE INTO quizzes (subject_id, title, description, class, created_by, difficulty_level) VALUES
-    (1, 'Advanced Mathematics - Class 10', 'Advanced math concepts', '10', 1, 'medium'),
-    (1, 'Advanced Algebra - Class 10', 'Complex algebraic concepts', '10', 1, 'medium'),
-    (2, 'Physics - Class 10', 'Basic physics concepts', '10', 1, 'medium'),
-    (2, 'Chemistry - Class 10', 'Introduction to chemistry', '10', 1, 'medium'),
-    (4, 'Computer Science - Class 10', 'Programming basics', '10', 1, 'medium'),
-    (5, 'Engineering Basics - Class 10', 'Basic engineering concepts', '10', 1, 'medium');
+    -- Questions for Basic Science - Class 6
+    INSERT OR IGNORE INTO questions (quiz_id, question_text, options, correct_answer, explanation, points) VALUES
+    (1, 'What is the basic unit of life?', '["Cell", "Atom", "Molecule", "Tissue"]', 'Cell', 'All living things are made up of cells, which are the basic units of life.', 10),
+    
+    (1, 'Which of these is a source of renewable energy?', '["Coal", "Solar Power", "Natural Gas", "Oil"]', 'Solar Power', 'Solar power is renewable as it comes from the sun, which is a continuous source of energy.', 10),
+    
+    (1, 'What is photosynthesis?', '["Plant growth", "Making food from sunlight", "Breathing process", "Water absorption"]', 'Making food from sunlight', 'Plants make their own food using sunlight through photosynthesis.', 10),
+    
+    (1, 'Which gas do plants absorb from the air?', '["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"]', 'Carbon Dioxide', 'Plants use carbon dioxide from the air for photosynthesis.', 10),
+    
+    (1, 'What is the main function of roots?', '["Photosynthesis", "Absorbing water", "Producing fruits", "Making leaves"]', 'Absorbing water', 'Roots absorb water and minerals from the soil for the plant.', 10),
+    
+    (1, 'What causes day and night?', '["Earth''s rotation", "Earth''s revolution", "The Sun''s movement", "The Moon''s phases"]', 'Earth''s rotation', 'The Earth rotates on its axis, causing day and night.', 10),
+    
+    (1, 'What is the Earth''s innermost layer?', '["Crust", "Mantle", "Core", "Atmosphere"]', 'Core', 'The Earth''s innermost layer is the core.', 10),
+    
+    (1, 'Which planet is known as the Red Planet?', '["Venus", "Mars", "Jupiter", "Saturn"]', 'Mars', 'Mars appears red due to iron oxide (rust) on its surface.', 10),
+    
+    (1, 'What causes the seasons?', '["Earth''s tilt", "Distance from Sun", "Moon''s gravity", "Ocean currents"]', 'Earth''s tilt', 'The Earth''s tilt causes seasons as it revolves around the Sun.', 10),
+    
+    (1, 'What is the main component of Earth''s atmosphere?', '["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"]', 'Nitrogen', 'Nitrogen makes up about 78% of Earth''s atmosphere.', 10)
   `);
 
   console.log('Database initialized successfully');

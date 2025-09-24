@@ -60,6 +60,34 @@ app.get('/api/quizzes/subject/:subjectId/class/:class', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch quizzes' });
   }
 });
+
+// Get questions for a specific quiz
+app.get('/api/questions/quiz/:quizId', async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    
+    // Get questions for the quiz
+    const questions = await db.all(
+      `SELECT * FROM questions WHERE quiz_id = ?`,
+      [quizId]
+    );
+
+    if (questions.length === 0) {
+      return res.json([]);
+    }
+
+    // Parse the options JSON string for each question
+    const parsedQuestions = questions.map(q => ({
+      ...q,
+      options: JSON.parse(q.options)
+    }));
+
+    res.json(parsedQuestions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Failed to fetch questions' });
+  }
+});
 (async () => {
   try {
     db = await initializeDatabase();
