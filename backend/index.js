@@ -218,14 +218,12 @@ app.get('/api/questions/quiz/:quizId', async (req, res) => {
     -- Insert core subjects
     INSERT OR IGNORE INTO subjects (name, description) VALUES
     ('Science', 'Physics, Chemistry, Biology - Interactive MCQs'),
-    ('Technology', 'Computer Science, Digital Skills - Interactive MCQs'),
     ('Engineering', 'Problem Solving, Design Thinking - Interactive MCQs'),
     ('Mathematics', 'Algebra, Geometry, Statistics - Interactive MCQs');
 
     -- Insert quizzes for each subject (for class 6)
     INSERT OR IGNORE INTO quizzes (subject_id, title, description, class, created_by) VALUES
     (1, 'Science Quiz', 'Test your knowledge in Physics, Chemistry, and Biology', '6', 1),
-    (2, 'Technology Quiz', 'Test your knowledge in Computer Science and Digital Skills', '6', 1),
     (3, 'Engineering Quiz', 'Test your knowledge in Problem Solving and Design Thinking', '6', 1),
     (4, 'Mathematics Quiz', 'Test your knowledge in Algebra, Geometry, and Statistics', '6', 1);
 
@@ -274,18 +272,7 @@ app.get('/api/questions/quiz/:quizId', async (req, res) => {
     (1, 'What is the SI unit of electric current?', '["Volt", "Watt", "Ampere", "Ohm"]', 2, 10),
     (1, 'Which part of the plant conducts photosynthesis?', '["Root", "Stem", "Leaves", "Flower"]', 2, 10);
 
-    -- Technology Quiz Questions (Computer Science, Digital Skills)
-    INSERT OR IGNORE INTO questions (quiz_id, question_text, options, correct_answer, points) VALUES
-    (2, 'What does CPU stand for?', '["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Computer Processing Unit"]', 0, 10),
-    (2, 'Which of these is a programming language?', '["Microsoft", "Python", "Firefox", "Router"]', 1, 10),
-    (2, 'What is the main function of RAM?', '["Permanent Storage", "Temporary Storage", "Processing Data", "Displaying Graphics"]', 1, 10),
-    (2, 'What does URL stand for?', '["Universal Resource Locator", "Unified Resource Link", "Universal Reference Link", "Unified Resource Locator"]', 0, 10),
-    (2, 'Which device is used for taking input through hand?', '["Monitor", "Printer", "Mouse", "Speaker"]', 2, 10),
-    (2, 'What is the standard port number for HTTP?', '["80", "443", "21", "25"]', 0, 10),
-    (2, 'Which file extension is used for Python files?', '[".exe", ".py", ".doc", ".html"]', 1, 10),
-    (2, 'What does HTML stand for?', '["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "High Text Modern Link"]', 0, 10),
-    (2, 'Which of these is a web browser?', '["Word", "Excel", "Chrome", "PowerPoint"]', 2, 10),
-    (2, 'What is the function of an operating system?', '["Play Games", "Manage Hardware and Software", "Send Emails", "Create Documents"]', 1, 10);
+
 
     -- Engineering Quiz Questions (Problem Solving, Design Thinking)
     INSERT OR IGNORE INTO questions (quiz_id, question_text, options, correct_answer, points) VALUES
