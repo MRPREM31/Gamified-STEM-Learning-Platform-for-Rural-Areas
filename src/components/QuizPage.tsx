@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/ui/footer";
+import { addCoins } from "@/lib/userStats";
 import { 
   ArrowLeft, 
   Clock, 
@@ -200,6 +201,10 @@ const QuizPage = ({ userId, subject, userClass, onBack, onComplete }: QuizPagePr
 
     setQuizCompleted(true);
     setShowResult(true);
+    
+    // Add coins to user stats
+    const updatedStats = addCoins(coins);
+    
     onComplete(score, coins, badge);
   };
 

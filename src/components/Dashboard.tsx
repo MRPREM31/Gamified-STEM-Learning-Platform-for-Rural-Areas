@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Footer } from "@/components/ui/footer";
 import { toast } from "sonner";
+import { getUserStats, updateUserStats } from "@/lib/userStats";
 import { 
   BookOpen, 
   Cpu, 
@@ -153,7 +154,7 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
   ];
 
 
-  // Fetch user stats from backend
+  // Initialize and update user stats
   const [studentStats, setStudentStats] = useState({
     coins: 0,
     badges: 0,
@@ -163,20 +164,30 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
   });
 
   useEffect(() => {
+    // Update stats on component mount and when user data changes
+    const stats = getUserStats();
+    const updatedStats = updateUserStats({}); // This will handle daily streak
+    
     const fetchStats = async () => {
       if (!userData?.id) return;
       try {
         const res = await fetch(`http://localhost:4000/api/results/${userData.id}`);
         const results = await res.json();
         // Aggregate stats from results
-        const coins = results.reduce((sum: number, r: any) => sum + (r.coins || 0), 0);
+        const coins = updatedStats.coins;
         const badges = results.length;
         const level = Math.floor(coins / 100);
-        const streak = badges; // demo: streak = badges
+        const streak = updatedStats.streak;
         const progress = Math.min(100, coins / 10);
         setStudentStats({ coins, badges, level, streak, progress });
       } catch (err) {
-        setStudentStats({ coins: 0, badges: 0, level: 0, streak: 0, progress: 0 });
+        setStudentStats({ 
+          coins: updatedStats.coins, 
+          badges: 0, 
+          level: Math.floor(updatedStats.coins / 100), 
+          streak: updatedStats.streak, 
+          progress: Math.min(100, updatedStats.coins / 10) 
+        });
       }
     };
     fetchStats();
