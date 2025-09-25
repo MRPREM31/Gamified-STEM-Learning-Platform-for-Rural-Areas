@@ -65,11 +65,20 @@ const QuizPage = ({ userId, subject, userClass, onBack, onComplete }: QuizPagePr
         // First get the subject ID from name
         const subjectRes = await fetch(`http://localhost:4000/api/subjects`);
         const subjects = await subjectRes.json();
-        const subjectId = subjects.find((s: any) => s.name.toLowerCase() === subject.toLowerCase())?.id;
+        console.log('Available subjects:', subjects);
+        console.log('Looking for subject:', subject);
+        const subjectId = subjects.find((s: any) => 
+          s.name.toLowerCase() === subject.toLowerCase() ||
+          (subject === 'Basic Science' && s.name === 'Science') ||
+          s.name.includes(subject)
+        )?.id;
         
         if (!subjectId) {
-          throw new Error('Subject not found');
+          console.error('Subject not found:', subject);
+          console.error('Available subjects:', subjects);
+          throw new Error(`Subject not found: ${subject}`);
         }
+        console.log('Found subject ID:', subjectId);
 
         const res = await fetch(`http://localhost:4000/api/quizzes/subject/${subjectId}/class/${encodeURIComponent(userClass)}`, {
           headers: {
@@ -172,7 +181,8 @@ const QuizPage = ({ userId, subject, userClass, onBack, onComplete }: QuizPagePr
     if (percentage >= 80) badge = 'gold';
     else if (percentage >= 60) badge = 'silver';
 
-    const coins = Math.floor(score * 5); // 5 coins per point
+    // Calculate coins based on percentage
+    const coins = Math.floor((percentage / 100) * 100); // Maximum 100 coins for perfect score
 
     // Save result to backend
     if (selectedQuiz) {
@@ -202,10 +212,13 @@ const QuizPage = ({ userId, subject, userClass, onBack, onComplete }: QuizPagePr
     setQuizCompleted(true);
     setShowResult(true);
     
-    // Add coins to user stats
-    const updatedStats = addCoins(coins);
+    // Calculate coins based on percentage
+    const coinsEarned = Math.floor((score / totalPoints) * 100); // One coin per percentage point
     
-    onComplete(score, coins, badge);
+    // Add coins to user stats
+    const updatedStats = addCoins(coinsEarned);
+    
+    onComplete(score, coinsEarned, badge);
   };
 
   const formatTime = (seconds: number) => {

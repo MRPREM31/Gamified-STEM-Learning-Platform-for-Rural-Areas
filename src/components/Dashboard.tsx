@@ -124,28 +124,28 @@ const Dashboard = ({ userType, userData, onSubjectSelect, onLogout }: DashboardP
 
   const subjects = [
     {
-      id: 'science',
-      name: 'Science',
+      id: 'Basic Science',
+      name: 'Basic Science',
       icon: BookOpen,
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       description: 'Physics, Chemistry, Biology'
     },
     {
-      id: 'technology',
+      id: 'Technology',
       name: 'Technology',
       icon: Cpu,
       color: 'bg-gradient-to-br from-purple-500 to-purple-600',
       description: 'Computer Science, Digital Skills'
     },
     {
-      id: 'engineering',
+      id: 'Engineering',
       name: 'Engineering',
       icon: Cog,
       color: 'bg-gradient-to-br from-orange-500 to-orange-600',
       description: 'Problem Solving, Design Thinking'
     },
     {
-      id: 'mathematics',
+      id: 'Mathematics',
       name: 'Mathematics',
       icon: Calculator,
       color: 'bg-gradient-to-br from-green-500 to-green-600',
